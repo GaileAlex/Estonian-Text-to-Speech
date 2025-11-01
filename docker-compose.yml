@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - tts-network
+      - kokoro-net
 
   tts-worker:
     build:
@@ -39,7 +39,7 @@ services:
       - MQ_USERNAME=guest
       - MQ_PASSWORD=guest
     networks:
-      - tts-network
+      - kokoro-net
     deploy:
       resources:
         reservations:
@@ -61,8 +61,8 @@ services:
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
     networks:
-      - tts-network
+      - kokoro-net
 
 networks:
-  tts-network:
-    driver: bridge
+  kokoro-net:
+    external: true
