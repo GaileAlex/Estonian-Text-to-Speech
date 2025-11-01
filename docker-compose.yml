@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # 1. Брокер сообщений (без изменений)
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Веб-интерфейс: http://localhost:15672 (guest/guest)
+    environment:
+      - MQ_HOST=rabbitmq
+      - MQ_USERNAME=guest
+      - MQ_PASSWORD=guest
+      - LOG_LEVEL=DEBUG
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tts-network
+
+  tts-worker:
+    image: ghcr.io/tartunlp/text-to-speech-worker:latest
+    command: --model-name multispeaker --model-config /app/config/config.yaml
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./models:/app/models
+      - ./tts-config/config.yaml:/app/config/config.yaml
+    environment:
+      - MQ_HOST=rabbitmq
+      - MQ_USERNAME=guest
+      - MQ_PASSWORD=guest
+    networks:
+      - tts-network
+
+  # 3. Ваше Spring Boot приложение (без изменений)
+  spring-app:
+    build: .
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+    networks:
+      - tts-network
+
+networks:
+  tts-network:
+    driver: bridge
