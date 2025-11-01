@@ -1,0 +1,3 @@
+FROM ghcr.io/tartunlp/text-to-speech-worker:latest
+
+RUN pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128

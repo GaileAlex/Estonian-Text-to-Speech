@@ -5,6 +5,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672" # Веб-интерфейс: http://localhost:15672 (guest/guest)
@@ -22,8 +23,11 @@ services:
       - tts-network
 
   tts-worker:
-    image: ghcr.io/tartunlp/text-to-speech-worker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
     command: --model-name multispeaker --model-config /app/config/config.yaml
+    restart: unless-stopped
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -36,10 +40,18 @@ services:
       - MQ_PASSWORD=guest
     networks:
       - tts-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   # 3. Ваше Spring Boot приложение (без изменений)
   spring-app:
     build: .
+    restart: unless-stopped
     depends_on:
       - rabbitmq
     ports:
