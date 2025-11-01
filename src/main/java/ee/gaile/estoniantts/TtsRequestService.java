@@ -4,22 +4,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * @author Aleksei Gaile 1 Nov 2025
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TtsRequestService {
+
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
@@ -33,7 +32,7 @@ public class TtsRequestService {
             );
             String jsonBody = objectMapper.writeValueAsString(requestBody);
 
-            Object reply =rabbitTemplate.convertSendAndReceive(
+            Object reply = rabbitTemplate.convertSendAndReceive(
                     TtsRabbitConfig.TTS_EXCHANGE,
                     jsonBody,
                     m -> {
@@ -45,8 +44,8 @@ public class TtsRequestService {
 
             if (reply instanceof byte[] bytes) {
                 String json = new String(bytes, StandardCharsets.UTF_8);
-                Map<String, Object> response = objectMapper.readValue(json, new TypeReference<>(){});
-
+                Map<String, Object> response = objectMapper.readValue(json, new TypeReference<>() {
+                });
                 Map<String, Object> content = (Map<String, Object>) response.get("content");
                 String audioBase64 = (String) content.get("audio");
 
@@ -55,13 +54,59 @@ public class TtsRequestService {
                     return null;
                 }
 
-                return Base64.getDecoder().decode(audioBase64);
+                // Декодируем Base64 и сразу обрабатываем
+                byte[] rawAudio = Base64.getDecoder().decode(audioBase64);
+                return processAudio(rawAudio);
             }
 
         } catch (Exception e) {
             log.error("Ошибка при отправке TTS запроса", e);
         }
-
         return null;
+    }
+
+    private byte[] processAudio(byte[] audioBytes) {
+        File inputFile = null;
+        File outputFile = null;
+        try {
+            inputFile = File.createTempFile("tts_input", ".wav");
+            outputFile = File.createTempFile("tts_output", ".wav");
+            try (FileOutputStream fos = new FileOutputStream(inputFile)) {
+                fos.write(audioBytes);
+            }
+
+            ProcessBuilder pb = new ProcessBuilder(
+                    "python3", "/app/process_tts.py",
+                    inputFile.getAbsolutePath(),
+                    outputFile.getAbsolutePath()
+            );
+
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            // читаем stdout+stderr
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.warn("[PY] {}", line);
+                }
+            }
+
+            int exit = process.waitFor();
+            log.info("Python exit code: {}", exit);
+
+            if (!outputFile.exists() || outputFile.length() == 0) {
+                log.error("Python didn't produce output file");
+                return audioBytes;
+            }
+
+            return Files.readAllBytes(outputFile.toPath());
+        } catch (Exception e) {
+            log.error("Audio processing failed", e);
+            return audioBytes;
+        } finally {
+            if (inputFile != null) inputFile.delete();
+            if (outputFile != null) outputFile.delete();
+        }
     }
 }
