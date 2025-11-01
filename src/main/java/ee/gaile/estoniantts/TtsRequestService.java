@@ -58,7 +58,6 @@ public class TtsRequestService {
                 return Base64.getDecoder().decode(audioBase64);
             }
 
-
         } catch (Exception e) {
             log.error("Ошибка при отправке TTS запроса", e);
         }
