@@ -17,19 +17,12 @@ public class TtsController {
 
     private final TtsRequestService ttsRequestService;
 
-    // Обновленный DTO
-    public record TtsRequest(String text, String speakerName, Integer speed) {}
+    public record TtsRequest(String text, String speakerName, Integer speed) {
+    }
 
     @PostMapping("/api/tts")
-    public Map<String, String> submitTtsJob(@RequestBody TtsRequest request) {
-        String jobId = UUID.randomUUID().toString();
+    public byte[] submitTtsJob(@RequestBody TtsRequest request) {
+        return ttsRequestService.requestTts(request.text(), request.speakerName(), request.speed);
 
-        // Вызываем обновленный сервис
-        ttsRequestService.requestTts(request.text(), request.speakerName(), request.speed);
-
-        return Map.of(
-                "message", "Задача на синтез речи принята",
-                "jobId", jobId
-        );
     }
 }

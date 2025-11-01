@@ -55,7 +55,7 @@ services:
     depends_on:
       - rabbitmq
     ports:
-      - "8080:8080"
+      - "8380:8380"
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=guest

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class TtsRabbitConfig {
 
     public static final String TTS_OUT_QUEUE = "tts.out";
+    public static final String TTS_IN_QUEUE = "tts.in";
     public static final String TTS_EXCHANGE = "text-to-speech.multispeaker_d3ce4a45";
 
     @Bean
@@ -27,4 +28,8 @@ public class TtsRabbitConfig {
     }
 
 
+    @Bean
+    public Queue ttsInQueue() {
+        return new Queue(TTS_IN_QUEUE);
+    }
 }
