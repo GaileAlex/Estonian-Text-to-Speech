@@ -71,20 +71,17 @@ public class TtsRequestService {
         try {
             inputFile = File.createTempFile("tts_input", ".wav");
             outputFile = File.createTempFile("tts_output", ".wav");
-            try (FileOutputStream fos = new FileOutputStream(inputFile)) {
-                fos.write(audioBytes);
-            }
+
+            Files.write(inputFile.toPath(), audioBytes);
 
             ProcessBuilder pb = new ProcessBuilder(
                     "python3", "/app/process_tts.py",
                     inputFile.getAbsolutePath(),
                     outputFile.getAbsolutePath()
             );
-
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            // читаем stdout+stderr
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -109,4 +106,5 @@ public class TtsRequestService {
             if (outputFile != null) outputFile.delete();
         }
     }
+
 }

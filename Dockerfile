@@ -16,11 +16,7 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     ln -s /usr/bin/python3 /usr/bin/python
 
-# (Необязательно, но удобно)
 RUN python3 -m pip install --upgrade pip
-
-# Если нужен PyTorch — добавь:
-# RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
 WORKDIR /app
 COPY --from=builder /workspace/target/*.jar app.jar
