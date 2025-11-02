@@ -50,7 +50,7 @@ public class TtsRequestService {
                 String audioBase64 = (String) content.get("audio");
 
                 if (audioBase64 == null) {
-                    log.error("Пустой TTS ответ: {}", response.get("error"));
+                    log.error("Empty TTS response: {}", response.get("error"));
                     return null;
                 }
 
@@ -60,7 +60,7 @@ public class TtsRequestService {
             }
 
         } catch (Exception e) {
-            log.error("Ошибка при отправке TTS запроса", e);
+            log.error("Error sending TTS request", e);
         }
         return null;
     }

@@ -1,14 +1,13 @@
 version: '3.8'
 
 services:
-  # 1. Брокер сообщений (без изменений)
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
     restart: unless-stopped
     ports:
       - "5672:5672"
-      - "15672:15672" # Веб-интерфейс: http://localhost:15672 (guest/guest)
+      - "15672:15672" # Web interface: http://localhost:15672 (guest/guest)
     environment:
       - MQ_HOST=rabbitmq
       - MQ_USERNAME=guest
@@ -48,7 +47,6 @@ services:
               count: all
               capabilities: [ gpu ]
 
-  # 3. Ваше Spring Boot приложение (без изменений)
   spring-app:
     build: .
     restart: unless-stopped
