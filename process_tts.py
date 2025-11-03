@@ -22,7 +22,6 @@ if sampwidth != 2:
 
 samples = struct.unpack('<' + 'h' * n_frames * n_channels, frames)
 
-# Простое уменьшение громкости
 factor = 0.5
 adjusted = [max(min(int(s * factor), 32767), -32768) for s in samples]
 
