@@ -1,5 +1,5 @@
 rabbitmq:
-  host: ${MQ_HOST}           # переменные окружения из docker-compose
+  host: ${MQ_HOST}
   username: ${MQ_USERNAME}
   password: ${MQ_PASSWORD}
   queues:
