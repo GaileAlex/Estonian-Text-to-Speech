@@ -8,7 +8,6 @@ COPY src ./src
 COPY process_tts.py /app/
 RUN ./mvnw package -DskipTests
 
-# Этап 2: финальный образ (с Python)
 FROM eclipse-temurin:17-jre-jammy
 
 RUN apt-get update && \

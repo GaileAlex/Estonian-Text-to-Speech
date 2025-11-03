@@ -54,7 +54,6 @@ public class TtsRequestService {
                     return null;
                 }
 
-                // Декодируем Base64 и сразу обрабатываем
                 byte[] rawAudio = Base64.getDecoder().decode(audioBase64);
                 return processAudio(rawAudio);
             }
