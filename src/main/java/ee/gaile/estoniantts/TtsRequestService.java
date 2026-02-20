@@ -22,7 +22,7 @@ public class TtsRequestService {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
-    public byte[] requestTts(String text, String speakerName, Integer speed) {
+    public byte[] requestTts(String text, String speakerName, Double speed) {
         String correlationId = UUID.randomUUID().toString();
         try {
             Map<String, Object> requestBody = Map.of(

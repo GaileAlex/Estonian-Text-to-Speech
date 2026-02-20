@@ -17,7 +17,7 @@ public class TtsController {
 
     private final TtsRequestService ttsRequestService;
 
-    public record TtsRequest(String text, String speakerName, Integer speed) {
+    public record TtsRequest(String text, String speakerName, Double speed) {
     }
 
     @PostMapping("/api/tts")
@@ -25,4 +25,5 @@ public class TtsController {
         return ttsRequestService.requestTts(request.text(), request.speakerName(), request.speed);
 
     }
+
 }
