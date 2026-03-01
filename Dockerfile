@@ -1,5 +1,4 @@
-# Этап 1: сборка JAR-файла
-FROM eclipse-temurin:17-jdk-jammy as builder
+FROM eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR /workspace
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
