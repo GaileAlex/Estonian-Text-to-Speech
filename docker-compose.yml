@@ -5,9 +5,9 @@ services:
     image: rabbitmq:3-management
     hostname: rabbitmq
     restart: unless-stopped
-    ports:
-      - "5672:5672"
-      - "15672:15672" # Web interface: http://localhost:15672 (guest/guest)
+    expose:
+      - "5672"
+      - "15672"
     environment:
       - MQ_HOST=rabbitmq
       - MQ_USERNAME=guest
@@ -52,8 +52,8 @@ services:
     restart: unless-stopped
     depends_on:
       - rabbitmq
-    ports:
-      - "8380:8380"
+    expose:
+      - "8380"
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=guest
