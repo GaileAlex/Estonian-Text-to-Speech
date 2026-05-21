@@ -52,8 +52,8 @@ services:
     restart: unless-stopped
     depends_on:
       - rabbitmq
-    expose:
-      - "8380"
+    ports:
+      - "127.0.0.1:8380:8380"
     environment:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=guest
