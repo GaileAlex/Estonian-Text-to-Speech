@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -23,8 +21,7 @@ services:
 
   tts-worker:
     build:
-      context: .
-      dockerfile: Dockerfile.gpu
+      context: ./docker/tts-worker
     command: --model-name multispeaker --model-config /app/config/config.yaml
     restart: unless-stopped
     depends_on:
@@ -32,7 +29,7 @@ services:
         condition: service_healthy
     volumes:
       - ./models:/app/models
-      - ./tts-config/config.yaml:/app/config/config.yaml
+      - ./docker/tts-worker/config.yaml:/app/config/config.yaml
     environment:
       - MQ_HOST=rabbitmq
       - MQ_USERNAME=guest
@@ -48,7 +45,9 @@ services:
               capabilities: [ gpu ]
 
   spring-app:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
     restart: unless-stopped
     depends_on:
       - rabbitmq

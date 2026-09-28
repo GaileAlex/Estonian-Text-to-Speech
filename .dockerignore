@@ -1,0 +1,7 @@
+# Keep the build context small: models are mounted into the worker, not baked into images
+models/
+target/
+.git/
+.idea/
+*.iml
+HELP.md
