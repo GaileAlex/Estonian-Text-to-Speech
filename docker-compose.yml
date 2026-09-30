@@ -11,8 +11,10 @@ services:
       - MQ_USERNAME=guest
       - MQ_PASSWORD=guest
       - LOG_LEVEL=DEBUG
+    # the AMQP port opens as the last step of the boot. rabbitmqctl starts an Erlang VM of its own: 2 s of CPU
+    # per check, a fifth of a core every 10 s for nothing
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: ["CMD", "bash", "-c", "</dev/tcp/127.0.0.1/5672"]
       interval: 10s
       timeout: 5s
       retries: 5
