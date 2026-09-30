@@ -28,6 +28,7 @@ public class TtsRequestService {
     private final TtsProperties properties;
 
     public byte[] requestTts(String text, String speaker, double speed) {
+        long startedAt = System.nanoTime();
         WorkerResponse response;
         try {
             response = rabbitTemplate.convertSendAndReceiveAsType(
@@ -37,6 +38,8 @@ public class TtsRequestService {
                     RESPONSE_TYPE
             );
         } catch (AmqpMessageReturnedException e) {
+            // the worker is down, or it does not know the speaker
+            log.warn("No TTS worker is serving the speaker {} (text of {} chars)", speaker, text.length());
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "No TTS worker is serving speaker '" + speaker + "'");
         } catch (AmqpException e) {
@@ -44,13 +47,17 @@ public class TtsRequestService {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "RabbitMQ is not available");
         }
 
+        long millis = (System.nanoTime() - startedAt) / 1_000_000;
         if (response == null) {
+            log.warn("The TTS worker did not answer in {} ms (speaker {}, text of {} chars)", millis, speaker,
+                    text.length());
             throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, "TTS worker did not respond in time");
         }
         if (response.statusCode() != 200 || response.content() == null || response.content().audio() == null) {
             log.error("TTS worker error {}: {}", response.statusCode(), response.status());
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "TTS worker error: " + response.status());
         }
+        log.info("Synthesized a text of {} chars with the speaker {} in {} ms", text.length(), speaker, millis);
 
         return adjustVolume(response.content().audio());
     }
