@@ -28,6 +28,14 @@
     </scm>
     <properties>
         <java.version>25</java.version>
+        <!-- newer than Spring Boot 4.1.1 manages, without its open advisories (OSV / GitHub):
+             Tomcat 11.0.24 - CVE-2026-65182, CVE-2026-65905, CVE-2026-68525;
+             Jackson 3.1.5 - CVE-2026-91777, CVE-2026-91776, CVE-2026-68497 and others;
+             amqp-client 5.30.0 - CVE-2026-69219, CVE-2026-69220, CVE-2026-75516 and others.
+             Remove each one when the managed version of Spring Boot is at least as new -->
+        <tomcat.version>11.0.26</tomcat.version>
+        <jackson-bom.version>3.1.7</jackson-bom.version>
+        <rabbit-amqp-client.version>5.36.0</rabbit-amqp-client.version>
     </properties>
     <dependencies>
         <dependency>

@@ -1,2 +1,4 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+# mounted into the RabbitMQ container: Linux line endings
+*.conf text eol=lf
