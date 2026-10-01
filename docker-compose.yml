@@ -1,16 +1,15 @@
 services:
   rabbitmq:
-    image: rabbitmq:3-management
+    # 3.x gets no fixes any more. The minor version is pinned: each minor may deny one more deprecated feature
+    image: rabbitmq:4.3-management
     hostname: rabbitmq
     restart: unless-stopped
     expose:
       - "5672"
       - "15672"
-    environment:
-      - MQ_HOST=rabbitmq
-      - MQ_USERNAME=guest
-      - MQ_PASSWORD=guest
-      - LOG_LEVEL=DEBUG
+    # the worker's queue is a deprecated kind (see the file); guest/guest from the network is the default of the image
+    volumes:
+      - ./docker/rabbitmq/20-tts-worker.conf:/etc/rabbitmq/conf.d/20-tts-worker.conf:ro
     # the AMQP port opens as the last step of the boot. rabbitmqctl starts an Erlang VM of its own: 2 s of CPU
     # per check, a fifth of a core every 10 s for nothing
     healthcheck:
