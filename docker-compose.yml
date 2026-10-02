@@ -55,9 +55,9 @@ services:
     ports:
       - "127.0.0.1:8380:8380"
     environment:
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
+      - MQ_HOST=rabbitmq
+      - MQ_USERNAME=guest
+      - MQ_PASSWORD=guest
     networks:
       - kokoro-net
 
