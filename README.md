@@ -113,7 +113,7 @@ The answer is a WAV file (`audio/wav`). The errors are `application/problem+json
 | Property                             | Default                   | Description                                       |
 |--------------------------------------|---------------------------|---------------------------------------------------|
 | `server.port`                        | `8380`                    | port of the API                                   |
-| `spring.rabbitmq.host` / `.port`     | `estonian-tts-rabbitmq-1` / `5672` | `MQ_HOST`, `MQ_PORT` (`SPRING_RABBITMQ_HOST` in Docker) |
+| `spring.rabbitmq.host` / `.port`     | `estonian-tts-rabbitmq-1` / `5672` | `MQ_HOST`, `MQ_PORT`                              |
 | `spring.rabbitmq.username` / `.password` | `guest` / `guest`     | `MQ_USERNAME`, `MQ_PASSWORD`                      |
 | `spring.rabbitmq.template.reply-timeout` | `60s`                 | how long a request waits for the worker           |
 | `tts.exchange`                       | `text-to-speech`          | exchange of the worker                            |

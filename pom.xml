@@ -13,19 +13,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>estonian-tts</name>
     <description>estonian-tts</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
     <properties>
         <java.version>25</java.version>
         <!-- newer than Spring Boot 4.1.1 manages, without its open advisories (OSV / GitHub):
