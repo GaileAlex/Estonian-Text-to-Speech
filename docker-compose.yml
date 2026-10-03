@@ -7,11 +7,12 @@ services:
     expose:
       - "5672"
       - "15672"
-    # the worker's queue is a deprecated kind (see the file); guest/guest from the network is the default of the image
+    # 20-tts-worker.conf permits the deprecated kind of queue the worker declares; the image itself lets guest/guest
+    # log in over the network
     volumes:
       - ./docker/rabbitmq/20-tts-worker.conf:/etc/rabbitmq/conf.d/20-tts-worker.conf:ro
-    # the AMQP port opens as the last step of the boot. rabbitmqctl starts an Erlang VM of its own: 2 s of CPU
-    # per check, a fifth of a core every 10 s for nothing
+    # The AMQP port opens at the last step of the boot, so a TCP check is enough. rabbitmqctl would start an Erlang VM
+    # of its own: 2 s of CPU per check, a fifth of a core every 10 s
     healthcheck:
       test: ["CMD", "bash", "-c", "</dev/tcp/127.0.0.1/5672"]
       interval: 10s
